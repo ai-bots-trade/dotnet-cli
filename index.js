@@ -3,6 +3,9 @@
 const yargs = require('yargs');
 const fs = require('fs');
 
+Array.prototype.insert = function ( index, item ) {
+    this.splice( index, 0, item );
+};
 
 const addObject = (type, name, interfaceName = null) => {
     let resultText = `public ${type} ${name}`
@@ -21,6 +24,7 @@ const addNamespace = (str, namespace) => {
 
 const servicesDirectory = './Services';
 const interfacesDirectory = './Interfaces';
+const startupFilepath = './Startup.cs';
 const argv = yargs
     .usage('Usage: dn <command> [options]')
     .command('g', 'generates a set of files')
@@ -62,7 +66,16 @@ function saveFile(filepath, content) {
 }
 
 function updateDependencyInjection(name) {
-
+    let fileContent = fs.readFileSync(startupFilepath, "utf8");
+    if (fileContent) {
+        const stringToReplace = 'services.AddControllers();';
+        const lines = fileContent.split('\r\n');
+        const insertIndex = lines.indexOf(lines.filter(l => l.includes(stringToReplace))[0]);
+        lines.splice(insertIndex + 1, 0, `\t\t\tservices.AddScoped<I${name}Service, ${name}Service>();`);
+        fs.writeFileSync(startupFilepath, lines.join("\r\n"));
+    } else {
+        console.log('Cannot find Startup.cs file');
+    }
 }
 
 function getProjectNamespace() {
