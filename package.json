@@ -1,0 +1,24 @@
+{
+  "name": "dotnet-cli",
+  "version": "1.0.0",
+  "description": "An angular cli style... cli for dotnet.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ai-bots-trade/dotnet-cli.git"
+  },
+  "keywords": [
+    "dotnet",
+    "cli",
+    "angular"
+  ],
+  "author": "Ai Bots Trade",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ai-bots-trade/dotnet-cli/issues"
+  },
+  "homepage": "https://github.com/ai-bots-trade/dotnet-cli#readme"
+}
