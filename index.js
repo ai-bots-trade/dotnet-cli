@@ -24,12 +24,16 @@ const addNamespace = (str, namespace) => {
 
 const servicesDirectory = './Services';
 const interfacesDirectory = './Interfaces';
+const factoriesDirectory = './Factories';
+const modelsDirectory = './Models';
 const startupFilepath = './Startup.cs';
 const argv = yargs
     .usage('Usage: dn <command> [options]')
     .command('g', 'generates a set of files')
-    .example('dn -g s -n Api', 'generates a service:\n./Interfaces/IApiService\n./Services/ApiService\nupdates Startup.cs')
-    .example('dn -g c -n Api', 'generates a controller:\n./Controllers/ApiController')
+    .example('dn -g s -n Api', 'generates a service:\n./Interfaces/IApiService.cs\n./Services/ApiService.cs\nupdates Startup.cs')
+    .example('dn -g c -n Api', 'generates a controller:\n./Controllers/ApiController.cs')
+    .example('dn -g f -n Service', 'generates a factory:\n./Factories/ServiceFactory.cs')
+    .example('dn -g m -n Api', 'generates a model:\n./Models/ApiModel.cs')
     .alias('n', 'name')
     .nargs('n', 1)
     .describe('n', 'Name of the generated object')
@@ -53,7 +57,7 @@ function createFileContent(fileType, name, namespace, importNamespaces = null, i
             fileText = `import ${importNamespace};\n` + fileText;
         }
     }
-    fileText = addObject(fileType, name, interfaceName)
+    fileText += addObject(fileType, name, interfaceName)
     fileText = addNamespace(fileText, namespace);
     return fileText;
 }
@@ -79,6 +83,7 @@ function updateDependencyInjection(name) {
 }
 
 function getProjectNamespace() {
+    console.log(process.cwd());
     const files = fs.readdirSync(process.cwd());
     return files.filter(f => f.includes('.csproj'))[0].replace('.csproj', '');
 }
@@ -88,7 +93,7 @@ function generateService(name) {
     createFolder(interfacesDirectory);
     const projectNamespace = getProjectNamespace();
     const interfaceContent = createFileContent("interface", `I${name}Service`, `${projectNamespace}.Interfaces`);
-    const classContent = createFileContent("class", `${name}Service`, `${projectNamespace}.Services`, 'Interfaces', `I${name}Service`);
+    const classContent = createFileContent("class", `${name}Service`, `${projectNamespace}.Services`, [`${projectNamespace}.Interfaces`], `I${name}Service`);
     saveFile(`${interfacesDirectory}/I${name}Service.cs`, interfaceContent);
     saveFile(`${servicesDirectory}/${name}Service.cs`, classContent);
     updateDependencyInjection(name);
@@ -98,12 +103,32 @@ function generateController(name) {
 
 }
 
+function generateFactory(name) {
+    createFolder(factoriesDirectory);
+    const classContent = createFileContent("static class", `${name}Factory`, +
+        `${getProjectNamespace()}.Factories`);
+    saveFile(`${factoriesDirectory}/${name}Factory.cs`, classContent);
+}
+
+function generateModel(name) {
+    createFolder(modelsDirectory);
+    const classContent = createFileContent("class", `${name}`, +
+        `${getProjectNamespace()}.Models`);
+    saveFile(`${modelsDirectory}/${name}.cs`, classContent);
+}
+
 switch (argv.g) {
     case 's':
-        generateService(argv.n);
+        generateService(argv.name);
         break;
     case 'c':
-        generateController(argv.n);
+        generateController(argv.name);
+        break;
+    case 'f':
+        generateFactory(argv.name);
+        break;
+    case 'm':
+        generateModel(argv.name);
         break;
 }
 
