@@ -1,7 +1,7 @@
 {
   "name": "dotnet-cli",
   "version": "1.0.0",
-  "description": "An angular cli style... cli for dotnet.",
+  "description": "An angular cli style... cli for asp.net core.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,7 @@
     "url": "git+ssh://git@github.com/ai-bots-trade/dotnet-cli.git"
   },
   "keywords": [
+    "asp",
     "dotnet",
     "cli",
     "angular"
