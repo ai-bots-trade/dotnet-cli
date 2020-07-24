@@ -1,5 +1,5 @@
 # dotnet-cli
-An angular inspired cli for dotnet
+An angular inspired cli for asp.net core
 
 ## Commands
 ### Service
